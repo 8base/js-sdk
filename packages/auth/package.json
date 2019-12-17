@@ -1,0 +1,14 @@
+{
+  "name": "@8base/auth",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Andrei Firsov <andrei.firsov@8base.com>",
+  "homepage": "",
+  "license": "MIT",
+  "main": "lib/auth.js",
+  "scripts": {
+    "clean": "rm -rf lib/*",
+    "prebuild": "yarn run clean",
+    "build": "tsc -b ."
+  }
+}

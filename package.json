@@ -1,0 +1,16 @@
+{
+  "name": "root",
+  "private": true,
+  "workspaces": [
+    "packages/api",
+    "packages/auth"
+  ],
+  "scripts": {
+    "postinstall": "lerna bootstrap",
+    "build": "lerna run build"
+  },
+  "devDependencies": {
+    "lerna": "^3.19.0",
+    "typescript": "^3.7.3"
+  }
+}

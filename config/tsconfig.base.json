@@ -1,0 +1,12 @@
+{
+  "skipLibCheck": true,
+  "moduleResolution": "node",
+  "removeComments": true,
+  "sourceMap": true,
+  "strict": true,
+  "declaration": true,
+  "declarationMap": true,
+  "target": "ES2016",
+  "module": "commonjs",
+  "esModuleInterop": true
+}
