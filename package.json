@@ -8,12 +8,15 @@
   "scripts": {
     "postinstall": "lerna bootstrap",
     "test": "jest --verbose",
+    "prettier:check": "yarn run prettier --check \"packages/*/{src,test}/**/*.{ts,tsx}\"",
+    "prettier:write": "yarn run prettier --write \"packages/*/{src,test}/**/*.{ts,tsx}\"",
     "build": "lerna run build"
   },
   "devDependencies": {
     "@types/jest": "^24.0.23",
     "jest": "^24.9.0",
     "lerna": "^3.19.0",
+    "prettier": "1.19.1",
     "ts-jest": "^24.2.0",
     "typescript": "^3.7.3"
   }
