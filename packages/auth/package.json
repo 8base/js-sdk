@@ -2,11 +2,19 @@
   "name": "@8base/auth",
   "version": "0.0.0",
   "description": "> TODO: description",
-  "author": "Andrei Firsov <andrei.firsov@8base.com>",
-  "homepage": "",
+  "author": "8base",
   "license": "MIT",
-  "main": "lib/auth.js",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+git@github.com:8base/js-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/8base/js-sdk/issues"
+  },
+  "homepage": "https://github.com/8base/js-sdk#readme",
   "scripts": {
+    "test": "jest",
     "clean": "rm -rf lib/*",
     "prebuild": "yarn run clean",
     "build": "tsc -b ."

@@ -6,7 +6,16 @@
   "homepage": "",
   "license": "MIT",
   "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+git@github.com:8base/js-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/8base/js-sdk/issues"
+  },
+  "homepage": "https://github.com/8base/js-sdk#readme",
   "scripts": {
+    "test": "jest",
     "clean": "rm -rf lib/*",
     "prebuild": "yarn run clean",
     "build": "tsc -b ."
