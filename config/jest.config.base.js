@@ -6,10 +6,11 @@ module.exports = {
     'ts-jest': {
       diagnostics: false,
     },
+    TEST_WORKSPACE_ID: "ck4bg6wtu001808mg6a6u7mjh",
   },
 
   moduleFileExtensions: ['ts', 'js', 'json'],
   testMatch: [
-    '<rootDir>/__tests__/**/*.ts'
+    '<rootDir>/__tests__/**/*.test.ts'
   ],
 };

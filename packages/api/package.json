@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "> TODO: description",
   "author": "Andrei Firsov <andrei.firsov@8base.com>",
-  "homepage": "",
+  "homepage": "https://github.com/8base/js-sdk#readme",
   "license": "MIT",
   "main": "lib/index.js",
   "repository": {
@@ -13,11 +13,13 @@
   "bugs": {
     "url": "https://github.com/8base/js-sdk/issues"
   },
-  "homepage": "https://github.com/8base/js-sdk#readme",
   "scripts": {
-    "test": "jest",
+    "test": "TEST_WORKSPACE_ID=ck4bg6wtu001808mg6a6u7mjh jest --verbose",
     "clean": "rm -rf lib/*",
     "prebuild": "yarn run clean",
     "build": "tsc -b ."
+  },
+  "dependencies": {
+    "cross-fetch": "^3.0.4"
   }
 }

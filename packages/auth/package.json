@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/8base/js-sdk#readme",
   "scripts": {
-    "test": "jest",
+    "test": "jest --verbose",
     "clean": "rm -rf lib/*",
     "prebuild": "yarn run clean",
     "build": "tsc -b ."
