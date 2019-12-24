@@ -7,10 +7,11 @@
   ],
   "scripts": {
     "postinstall": "lerna bootstrap",
-    "test": "jest --verbose",
-    "prettier:check": "yarn run prettier --check \"packages/*/{src,test}/**/*.{ts,tsx}\"",
-    "prettier:write": "yarn run prettier --write \"packages/*/{src,test}/**/*.{ts,tsx}\"",
-    "build": "lerna run build"
+    "prettier:check": "prettier --check \"packages/*/{src,__tests__}/**/*.{ts,tsx}\"",
+    "prettier:write": "prettier --write \"packages/*/{src,__tests__}/**/*.{ts,tsx}\"",
+    "tslint": "tslint \"packages/*/{src,__tests__}/**/*.{ts,tsx}\"",
+    "build": "lerna run build",
+    "test": "TEST_WORKSPACE_ID=ck4bg6wtu001808mg6a6u7mjh jest --verbose"
   },
   "devDependencies": {
     "@types/jest": "^24.0.23",
@@ -18,6 +19,8 @@
     "lerna": "^3.19.0",
     "prettier": "1.19.1",
     "ts-jest": "^24.2.0",
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.7.3"
   }
 }
