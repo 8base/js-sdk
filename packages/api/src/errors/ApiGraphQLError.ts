@@ -1,6 +1,6 @@
-import { IGraphQLRequest, IGraphQLResponse } from './types';
+import { IGraphQLRequest, IGraphQLResponse } from '../types';
 
-export class GraphQLError<T> extends Error {
+export class ApiGraphQLError<T> extends Error {
   public request: IGraphQLRequest;
   public response: IGraphQLResponse<T>;
 
@@ -21,7 +21,7 @@ export class GraphQLError<T> extends Error {
     this.response = response;
 
     if (typeof Error.captureStackTrace === 'function') {
-      Error.captureStackTrace(this, GraphQLError);
+      Error.captureStackTrace(this, ApiGraphQLError);
     }
   }
 }
