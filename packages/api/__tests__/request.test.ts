@@ -136,4 +136,18 @@ describe('request', () => {
       ],
     });
   });
+
+  it("doesn't run subscriptions", () => {
+    const responsePromise = api.request(`
+      subscription {
+        apiTest {
+          node {
+            id
+          }
+        }
+      }
+    `);
+
+    expect(responsePromise).rejects.toThrow('Expected GraphQL query or mutation.');
+  });
 });
