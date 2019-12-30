@@ -1,5 +1,4 @@
 import { Api } from '../src';
-import { IApiTest, IApiTestsListData } from './types';
 
 const { TEST_WORKSPACE_ID } = process.env;
 
@@ -17,7 +16,7 @@ describe('mutation', () => {
   });
 
   it('runs graphQL mutation with "{ someMutation(data) { field1 field2 }}" form', async () => {
-    const response = await api.mutation<IApiTest>(`
+    const response = await api.mutation(`
       {
         apiTestCreate(data: { timestamp: "${Date.now()}"}) {
           id
@@ -37,7 +36,7 @@ describe('mutation', () => {
   });
 
   it('runs graphQL mutation with "mutation { someMutation(data) { field1 field2 }}" form', async () => {
-    const response = await api.mutation<IApiTest>(
+    const response = await api.mutation(
       `
       mutation ApiTestCreate($data: ApiTestCreateInput!) {
         apiTestCreate(data: $data) {
@@ -64,7 +63,7 @@ describe('mutation', () => {
   });
 
   it("doesn't run queries", () => {
-    const responsePromise = api.mutation<IApiTestsListData>(`
+    const responsePromise = api.mutation(`
       query {
         apiTestsList(first: 5, sort: { timestamp: ASC}) {
           items {

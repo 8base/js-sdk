@@ -17,7 +17,8 @@
     "test": "TEST_WORKSPACE_ID=ck4bg6wtu001808mg6a6u7mjh jest --verbose",
     "clean": "rm -rf lib/*",
     "prebuild": "yarn run clean",
-    "build": "tsc -b ."
+    "build": "tsc -b .",
+    "tslint": "tslint \"{src,__tests__}/**/*.{ts,tsx}\""
   },
   "dependencies": {
     "cross-fetch": "^3.0.4",
