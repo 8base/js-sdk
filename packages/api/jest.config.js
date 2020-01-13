@@ -1,3 +1,16 @@
+const baseConfig = require('../../config/jest.config.base.js');
+
 module.exports = {
-  ...require('../../config/jest.config.base.js'),
+  projects: [
+    {
+      ...baseConfig,
+      displayName: 'node',
+      testEnvironment: 'node',
+    },
+    {
+      ...baseConfig,
+      displayName: 'jsdom',
+      testEnvironment: 'jsdom'
+    }
+  ]
 };
