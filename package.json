@@ -11,7 +11,7 @@
     "prettier:write": "prettier --write \"packages/*/{src,__tests__}/**/*.{ts,tsx}\"",
     "tslint": "tslint \"packages/*/{src,__tests__}/**/*.{ts,tsx}\"",
     "build": "lerna run build",
-    "test": "TEST_WORKSPACE_ID=ck4bg6wtu001808mg6a6u7mjh jest --verbose"
+    "test": "lerna run test --stream"
   },
   "devDependencies": {
     "@types/jest": "^24.0.23",
