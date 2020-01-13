@@ -1,5 +1,4 @@
 import { Api } from '../src';
-import { IApiTestsListData, IApiTest } from './types';
 
 const { TEST_WORKSPACE_ID } = process.env;
 
@@ -17,7 +16,7 @@ describe('request', () => {
   });
 
   it('runs a graphQL query', async () => {
-    const response = await api.request<IApiTestsListData>(`
+    const response = await api.request(`
       query {
         apiTestsList(first: 5, sort: { timestamp: ASC}) {
           items {
@@ -41,7 +40,7 @@ describe('request', () => {
   });
 
   it('runs a graphQL query with variables', async () => {
-    const response = await api.request<IApiTestsListData>(
+    const response = await api.request(
       `
       query ApiTestsList($first: Int, $sort: [ApiTestSort!]) {
         apiTestsList(first: $first, sort: $sort) {
@@ -73,7 +72,7 @@ describe('request', () => {
   });
 
   it('runs a graphQL mutation', async () => {
-    const response = await api.request<IApiTest>(
+    const response = await api.request(
       `
       mutation ApiTestCreate($data: ApiTestCreateInput!) {
         apiTestCreate(data: $data) {
@@ -108,11 +107,13 @@ describe('request', () => {
       }
     `);
 
-    expect(requestPromise).rejects.toThrow('HTTP Error. Code: 400. Message: Bad Request.');
+    expect(requestPromise).rejects.toThrow(
+      'HTTP Error. Code: 400. Message: Bad Request.',
+    );
   });
 
   it('passes a graphQL error in a return value', async () => {
-    const response = await api.request<IApiTestsListData>(`
+    const response = await api.request(`
       query {
         apiTestsList(first: -1) {
           items {
@@ -148,6 +149,8 @@ describe('request', () => {
       }
     `);
 
-    expect(responsePromise).rejects.toThrow('Expected GraphQL query or mutation.');
+    expect(responsePromise).rejects.toThrow(
+      'Expected GraphQL query or mutation.',
+    );
   });
 });

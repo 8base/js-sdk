@@ -1,5 +1,4 @@
 import { Api } from '../src';
-import { IApiTestsListData } from './types';
 
 const { TEST_WORKSPACE_ID } = process.env;
 
@@ -31,8 +30,8 @@ describe('fetch options', () => {
     fetch = originalFetch;
   });
 
-  it('passes options from request method', () => {
-    api.request<IApiTestsListData>(
+  it('passes options from request method', async () => {
+    await api.request(
       `
       query {
         apiTestsList {
@@ -58,9 +57,9 @@ describe('fetch options', () => {
     );
   });
 
-  it("doesn't overwrite body option", () => {
+  it("doesn't overwrite body option", async () => {
     const customBody = JSON.stringify({ query: 'Wrong Query', variables: {} });
-    api.request<IApiTestsListData>(
+    await api.request(
       `
       query {
         apiTestsList {
@@ -86,8 +85,8 @@ describe('fetch options', () => {
     );
   });
 
-  it("doesn't overwrite method option", () => {
-    api.request<IApiTestsListData>(
+  it("doesn't overwrite method option", async () => {
+    await api.request(
       `
       query {
         apiTestsList {

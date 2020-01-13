@@ -1,10 +1,14 @@
 import { IGraphQLRequest, IGraphQLResponse } from '../types';
 
-export class ApiGraphQLError<T> extends Error {
-  public request: IGraphQLRequest;
-  public response: IGraphQLResponse<T>;
+export class ApiGraphQLError extends Error {
+  public static hasError(response: IGraphQLResponse) {
+    return Array.isArray(response.errors) && response.errors.length > 0;
+  }
 
-  constructor(request: IGraphQLRequest, response: IGraphQLResponse<T>) {
+  public request: IGraphQLRequest;
+  public response: IGraphQLResponse;
+
+  constructor(request: IGraphQLRequest, response: IGraphQLResponse) {
     let message = 'GraphQL Error.';
 
     if (response.errors[0].code) {
@@ -16,6 +20,8 @@ export class ApiGraphQLError<T> extends Error {
     }
 
     super(message);
+
+    Object.setPrototypeOf(this, ApiGraphQLError.prototype);
 
     this.request = request;
     this.response = response;

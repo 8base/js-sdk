@@ -17,7 +17,7 @@ describe('query', () => {
   });
 
   it('runs graphQL query with "{ someQuery { field1 field2 }}" form', async () => {
-    const response = await api.query<IApiTestsListData>(`
+    const response = await api.query(`
       {
         apiTestsList(first: 5, sort: { timestamp: ASC}) {
           items {
@@ -41,7 +41,7 @@ describe('query', () => {
   });
 
   it('runs graphQL query with "query { someQuery { field1 field2 }}" form', async () => {
-    const response = await api.query<IApiTestsListData>(`
+    const response = await api.query(`
       query {
         apiTestsList(first: 5, sort: { timestamp: ASC}) {
           items {

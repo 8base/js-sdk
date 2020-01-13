@@ -1,3 +1,6 @@
+import { ApiGraphQLError } from './errors/ApiGraphQLError';
+import { ApiHTTPError } from './errors/ApiHTTPError';
+
 export interface IFetchOptions {
   mode?: RequestInit['mode'];
   credentials?: RequestInit['credentials'];
@@ -10,11 +13,21 @@ export interface IFetchOptions {
   headers?: RequestInit['headers'];
 }
 
-export type ApiHeaders = RequestInit['headers'] | (() => RequestInit['headers']);
+export type ApiHeaders =
+  | RequestInit['headers']
+  | (() => RequestInit['headers']);
 
 export interface IApiOptions {
-  headers?: ApiHeaders;
   workspaceId: string;
+  headers?: ApiHeaders;
+  catchErrors?: (error: ApiGraphQLError | ApiHTTPError) => void;
+  transformRequest?: Array<IHandlerFunction<IGraphQLRequest>>;
+  transformResponse?: Array<
+    IHandlerFunction<{
+      request: IGraphQLRequest;
+      response: IGraphQLResponse;
+    }>
+  >;
 }
 
 export interface IGraphQLErrorDescription {
@@ -34,7 +47,12 @@ export interface IGraphQLRequest {
   variables?: IGraphQLVariables;
 }
 
-export interface IGraphQLResponse<T> {
-  data: T;
-  errors: IGraphQLErrorDescription[];
+export interface IGraphQLResponse {
+  data?: any;
+  errors?: IGraphQLErrorDescription[];
 }
+
+export type IHandlerFunction<T> = (
+  next: (data: T) => Promise<T>,
+  data: T,
+) => Promise<T>;

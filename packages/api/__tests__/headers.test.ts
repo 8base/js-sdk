@@ -1,5 +1,4 @@
 import { Api } from '../src';
-import { IApiTestsListData } from './types';
 
 const { TEST_WORKSPACE_ID } = process.env;
 
@@ -22,7 +21,7 @@ describe('headers', () => {
     fetch = originalFetch;
   });
 
-  it('passes headers from constructor. Object', () => {
+  it('passes headers from constructor. Object', async () => {
     const api = new Api({
       workspaceId: TEST_WORKSPACE_ID,
       headers: {
@@ -30,7 +29,7 @@ describe('headers', () => {
       },
     });
 
-    api.request<IApiTestsListData>(`
+    await api.request(`
       query {
         apiTestsList {
           items {
@@ -54,7 +53,7 @@ describe('headers', () => {
     );
   });
 
-  it('passes headers from constructor. Function', () => {
+  it('passes headers from constructor. Function', async () => {
     const api = new Api({
       workspaceId: TEST_WORKSPACE_ID,
       headers: () => ({
@@ -62,7 +61,7 @@ describe('headers', () => {
       }),
     });
 
-    api.request<IApiTestsListData>(`
+    await api.request(`
       query {
         apiTestsList {
           items {
@@ -86,7 +85,7 @@ describe('headers', () => {
     );
   });
 
-  it('passes headers from method', () => {
+  it('passes headers from method', async () => {
     const api = new Api({
       workspaceId: TEST_WORKSPACE_ID,
       headers: {
@@ -94,7 +93,7 @@ describe('headers', () => {
       },
     });
 
-    api.request<IApiTestsListData>(
+    await api.request(
       `
       query {
         apiTestsList {
@@ -123,7 +122,7 @@ describe('headers', () => {
     );
   });
 
-  it("method's headers overwrite constructor's headers", () => {
+  it("method's headers overwrite constructor's headers", async () => {
     const api = new Api({
       workspaceId: TEST_WORKSPACE_ID,
       headers: {
@@ -131,7 +130,7 @@ describe('headers', () => {
       },
     });
 
-    api.request<IApiTestsListData>(
+    await api.request(
       `
       query {
         apiTestsList {
@@ -159,7 +158,7 @@ describe('headers', () => {
     );
   });
 
-  it("constructor's headers can't overwrite 'content-type' header", () => {
+  it("constructor's headers can't overwrite 'content-type' header", async () => {
     const api = new Api({
       workspaceId: TEST_WORKSPACE_ID,
       headers: {
@@ -167,7 +166,7 @@ describe('headers', () => {
       },
     });
 
-    api.request<IApiTestsListData>(`
+    await api.request(`
       query {
         apiTestsList {
           items {
@@ -190,12 +189,12 @@ describe('headers', () => {
     );
   });
 
-  it("method's headers can't overwrite 'content-type' header", () => {
+  it("method's headers can't overwrite 'content-type' header", async () => {
     const api = new Api({
       workspaceId: TEST_WORKSPACE_ID,
     });
 
-    api.request<IApiTestsListData>(
+    await api.request(
       `
       query {
         apiTestsList {

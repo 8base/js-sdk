@@ -1,6 +1,10 @@
 import { IGraphQLRequest } from '../types';
 
 export class ApiHTTPError extends Error {
+  public static hasError(httpResponse: Response) {
+    return !httpResponse.ok;
+  }
+
   public request: IGraphQLRequest;
   public httpResponse: Response;
 
@@ -16,6 +20,8 @@ export class ApiHTTPError extends Error {
     }
 
     super(message);
+
+    Object.setPrototypeOf(this, ApiHTTPError.prototype);
 
     this.request = request;
     this.httpResponse = httpResponse;
