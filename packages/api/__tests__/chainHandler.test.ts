@@ -9,7 +9,7 @@ describe('ChainHandler', () => {
       });
     });
 
-    const handler2 = new ChainHandler<any>((next, data) => {
+    const handler2 = new ChainHandler<any>((_, data) => {
       expect(data).toHaveProperty('handler1Prop');
 
       return {
@@ -56,7 +56,7 @@ describe('ChainHandler', () => {
   });
 
   it('allows to control chain flow', async () => {
-    const handler1 = new ChainHandler<any>((next, data) => {
+    const handler1 = new ChainHandler<any>((_, data) => {
       return {
         ...data,
         handler1Prop: true,

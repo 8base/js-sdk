@@ -3,7 +3,7 @@ import { Api } from '../src';
 const { TEST_WORKSPACE_ID } = process.env;
 
 describe('headers', () => {
-  let originalFetch;
+  let originalFetch: any;
 
   beforeAll(() => {
     originalFetch = fetch;
@@ -23,7 +23,7 @@ describe('headers', () => {
 
   it('passes headers from constructor. Object', async () => {
     const api = new Api({
-      workspaceId: TEST_WORKSPACE_ID,
+      workspaceId: TEST_WORKSPACE_ID as string,
       headers: {
         auth: 'Some token',
       },
@@ -55,7 +55,7 @@ describe('headers', () => {
 
   it('passes headers from constructor. Function', async () => {
     const api = new Api({
-      workspaceId: TEST_WORKSPACE_ID,
+      workspaceId: TEST_WORKSPACE_ID as string,
       headers: () => ({
         auth: 'Some token',
       }),
@@ -87,7 +87,7 @@ describe('headers', () => {
 
   it('passes headers from method', async () => {
     const api = new Api({
-      workspaceId: TEST_WORKSPACE_ID,
+      workspaceId: TEST_WORKSPACE_ID as string,
       headers: {
         auth: 'Some token',
       },
@@ -105,7 +105,7 @@ describe('headers', () => {
       }
     `,
       {},
-      { headers: { workspace: TEST_WORKSPACE_ID } },
+      { headers: { workspace: TEST_WORKSPACE_ID as string } },
     );
 
     expect(fetch).lastCalledWith(
@@ -124,7 +124,7 @@ describe('headers', () => {
 
   it("method's headers overwrite constructor's headers", async () => {
     const api = new Api({
-      workspaceId: TEST_WORKSPACE_ID,
+      workspaceId: TEST_WORKSPACE_ID as string,
       headers: {
         auth: 'Some token',
       },
@@ -160,7 +160,7 @@ describe('headers', () => {
 
   it("constructor's headers can't overwrite 'content-type' header", async () => {
     const api = new Api({
-      workspaceId: TEST_WORKSPACE_ID,
+      workspaceId: TEST_WORKSPACE_ID as string,
       headers: {
         'content-type': '*/*',
       },
@@ -191,7 +191,7 @@ describe('headers', () => {
 
   it("method's headers can't overwrite 'content-type' header", async () => {
     const api = new Api({
-      workspaceId: TEST_WORKSPACE_ID,
+      workspaceId: TEST_WORKSPACE_ID as string,
     });
 
     await api.request(

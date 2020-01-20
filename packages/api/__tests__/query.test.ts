@@ -1,19 +1,14 @@
 import { Api } from '../src';
-import { IApiTestsListData } from './types';
 
 const { TEST_WORKSPACE_ID } = process.env;
 
 describe('query', () => {
-  let api: Api = null;
+  let api: Api;
 
   beforeEach(() => {
     api = new Api({
-      workspaceId: TEST_WORKSPACE_ID,
+      workspaceId: TEST_WORKSPACE_ID as string,
     });
-  });
-
-  afterEach(() => {
-    api = null;
   });
 
   it('runs graphQL query with "{ someQuery { field1 field2 }}" form', async () => {
