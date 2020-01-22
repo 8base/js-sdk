@@ -3,16 +3,12 @@ import { Api } from '../src';
 const { TEST_WORKSPACE_ID } = process.env;
 
 describe('mutation', () => {
-  let api: Api = null;
+  let api: Api;
 
   beforeEach(() => {
     api = new Api({
-      workspaceId: TEST_WORKSPACE_ID,
+      workspaceId: TEST_WORKSPACE_ID as string,
     });
-  });
-
-  afterEach(() => {
-    api = null;
   });
 
   it('runs graphQL mutation with "{ someMutation(data) { field1 field2 }}" form', async () => {

@@ -6,29 +6,33 @@ import {
   OperationTypeNode,
   parse,
 } from 'graphql/language';
+import { SubscriptionClient } from 'subscriptions-transport-ws';
+import WebSocket from 'isomorphic-ws';
 
-import { API_ENDPOINT } from './constants';
+import { API_ENDPOINT, WS_ENDPOINT } from './constants';
 import { ApiHTTPError } from './errors/ApiHTTPError';
 import { ApiGraphQLError } from './errors/ApiGraphQLError';
 import {
   IApiOptions,
+  IApiSubscriptionOptions,
   IFetchOptions,
   IGraphQLRequest,
-  IGraphQLResponse,
   IGraphQLVariables,
 } from './types';
 import { ChainHandler } from './ChainHandler';
+import { ExecutionResult } from 'graphql';
 
 const GRAPHQL_FULL_QUERY_PATTERN = /^\s*query/im;
 
 export class Api {
+  public readonly subscriptionClient: SubscriptionClient;
   private readonly url: string;
   private readonly headers: IApiOptions['headers'];
   private readonly catchErrors: IApiOptions['catchErrors'];
   private readonly requestHandler: ChainHandler<IGraphQLRequest>;
   private readonly responseHandler: ChainHandler<{
     request: IGraphQLRequest;
-    response: IGraphQLResponse;
+    response: ExecutionResult;
   }>;
 
   constructor(options: IApiOptions) {
@@ -37,6 +41,7 @@ export class Api {
       headers,
       catchErrors,
       transformRequest = [],
+      subscription,
     } = options;
     let { transformResponse = [] } = options;
 
@@ -47,7 +52,8 @@ export class Api {
 
           if (
             transformedData.response &&
-            ApiGraphQLError.hasError(transformedData.response)
+            ApiGraphQLError.hasError(transformedData.response) &&
+            typeof this.catchErrors === 'function'
           ) {
             this.catchErrors(
               new ApiGraphQLError(
@@ -68,13 +74,17 @@ export class Api {
     this.catchErrors = catchErrors;
     this.requestHandler = ChainHandler.fromArray(transformRequest);
     this.responseHandler = ChainHandler.fromArray(transformResponse);
+    this.subscriptionClient = this.prepareSubscriptionClient(
+      workspaceId,
+      subscription,
+    );
   }
 
   public async request(
     query: string,
     variables?: IGraphQLVariables,
     options: IFetchOptions = { headers: {} },
-  ): Promise<IGraphQLResponse> {
+  ): Promise<ExecutionResult> {
     const queryDocument = this.getQueryDocument(query);
     const operationDefinition = this.getOperationDefinition(queryDocument);
     const isValidOperation =
@@ -128,7 +138,7 @@ export class Api {
     query: string,
     variables?: IGraphQLVariables,
     options?: IFetchOptions,
-  ): Promise<IGraphQLResponse> {
+  ): Promise<ExecutionResult> {
     const queryDocument = this.getQueryDocument(query);
     const operationDefinition = this.getOperationDefinition(queryDocument);
 
@@ -149,7 +159,7 @@ export class Api {
     query: string,
     variables?: IGraphQLVariables,
     options?: IFetchOptions,
-  ): Promise<IGraphQLResponse> {
+  ): Promise<ExecutionResult> {
     // It's not possible to differentiate "query { someQuery }"
     // from "{ someQuery }" form by ast parser means
     // so it checks for "query { someQuery }" form by plain regular expression
@@ -172,6 +182,37 @@ export class Api {
     }
 
     return this.request(query, variables, options);
+  }
+
+  public subscription(
+    query: string,
+    options: IApiSubscriptionOptions = {},
+  ): () => void {
+    const { variables, data, error } = options;
+
+    const result = this.subscriptionClient.request({
+      query,
+      variables,
+    });
+
+    const { unsubscribe } = result.subscribe({
+      next(result) {
+        if (typeof data === 'function') {
+          data(result);
+        }
+      },
+      error(e) {
+        if (typeof error === 'function') {
+          error(e);
+        }
+      },
+    });
+
+    return unsubscribe;
+  }
+
+  public closeSubscriptionConnection() {
+    this.subscriptionClient.close();
   }
 
   private getQueryDocument(query: string): DocumentNode {
@@ -199,5 +240,62 @@ export class Api {
       ...headers,
       'content-type': 'application/json',
     };
+  }
+
+  private prepareSubscriptionClient(
+    workspaceId: string,
+    subscriptionOptions: IApiOptions['subscription'] = {},
+  ): SubscriptionClient {
+    const {
+      connecting,
+      connected,
+      reconnecting,
+      reconnected,
+      disconnected,
+      error,
+      connectionParams,
+    } = subscriptionOptions;
+
+    const subscriptionClient = new SubscriptionClient(
+      WS_ENDPOINT,
+      {
+        lazy: true,
+        reconnect: true,
+        connectionParams: () => ({
+          ...(typeof connectionParams === 'function'
+            ? connectionParams()
+            : connectionParams),
+          workspaceId,
+        }),
+      },
+      WebSocket,
+      [],
+    );
+
+    if (typeof connecting === 'function') {
+      subscriptionClient.onConnecting(connecting);
+    }
+
+    if (typeof connected === 'function') {
+      subscriptionClient.onConnected(connected);
+    }
+
+    if (typeof reconnecting === 'function') {
+      subscriptionClient.onReconnecting(reconnecting);
+    }
+
+    if (typeof reconnected === 'function') {
+      subscriptionClient.onReconnected(reconnected);
+    }
+
+    if (typeof disconnected === 'function') {
+      subscriptionClient.onDisconnected(disconnected);
+    }
+
+    if (typeof error === 'function') {
+      subscriptionClient.onError(error);
+    }
+
+    return subscriptionClient;
   }
 }

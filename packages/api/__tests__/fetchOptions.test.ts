@@ -3,7 +3,7 @@ import { Api } from '../src';
 const { TEST_WORKSPACE_ID } = process.env;
 
 describe('fetch options', () => {
-  let originalFetch;
+  let originalFetch: any;
   let api: Api;
 
   beforeAll(() => {
@@ -14,15 +14,13 @@ describe('fetch options', () => {
 
   beforeEach(() => {
     api = new Api({
-      workspaceId: TEST_WORKSPACE_ID,
+      workspaceId: TEST_WORKSPACE_ID as string,
     });
   });
 
   afterEach(() => {
     // @ts-ignore
     fetch.mockClear();
-
-    api = null;
   });
 
   afterAll(() => {

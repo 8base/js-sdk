@@ -1,3 +1,6 @@
+import { ExecutionResult } from 'graphql';
+import { ConnectionParams } from 'subscriptions-transport-ws';
+
 import { ApiGraphQLError } from './errors/ApiGraphQLError';
 import { ApiHTTPError } from './errors/ApiHTTPError';
 
@@ -25,17 +28,24 @@ export interface IApiOptions {
   transformResponse?: Array<
     IHandlerFunction<{
       request: IGraphQLRequest;
-      response: IGraphQLResponse;
+      response: ExecutionResult;
     }>
   >;
+  subscription?: {
+    connecting?: () => void;
+    connected?: () => void;
+    reconnecting?: () => void;
+    reconnected?: () => void;
+    disconnected?: () => void;
+    error?: (error: Error) => void;
+    connectionParams?: ConnectionParams | (() => ConnectionParams);
+  };
 }
 
-export interface IGraphQLErrorDescription {
-  message?: string;
-  code?: string;
-  path?: string | number | Array<string | number>;
-  locations?: Array<{ line: number; column: number }>;
-  details?: any;
+export interface IApiSubscriptionOptions {
+  variables?: IGraphQLVariables;
+  data?: (data: ExecutionResult) => void;
+  error?: (error: Error) => void;
 }
 
 export interface IGraphQLVariables {
@@ -45,11 +55,6 @@ export interface IGraphQLVariables {
 export interface IGraphQLRequest {
   query: string;
   variables?: IGraphQLVariables;
-}
-
-export interface IGraphQLResponse {
-  data?: any;
-  errors?: IGraphQLErrorDescription[];
 }
 
 export type IHandlerFunction<T> = (

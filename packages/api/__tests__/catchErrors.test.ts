@@ -6,13 +6,13 @@ const { TEST_WORKSPACE_ID } = process.env;
 
 describe('catchErrors', () => {
   const errorCatcher = jest.fn();
-  let api = null;
+  let api: Api;
 
   beforeEach(() => {
     errorCatcher.mockClear();
 
     api = new Api({
-      workspaceId: TEST_WORKSPACE_ID,
+      workspaceId: TEST_WORKSPACE_ID as string,
       catchErrors: errorCatcher,
     });
   });

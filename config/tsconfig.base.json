@@ -1,16 +1,18 @@
 {
-  "skipLibCheck": true,
-  "moduleResolution": "node",
-  "removeComments": true,
-  "sourceMap": true,
-  "strict": true,
-  "noImplicitReturns": true,
-  "noFallthroughCasesInSwitch": true,
-  "noUnusedParameters": true,
-  "noUnusedLocals": true,
-  "declaration": true,
-  "declarationMap": true,
-  "target": "ES2016",
-  "module": "commonjs",
-  "esModuleInterop": true
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "removeComments": true,
+    "sourceMap": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "declaration": true,
+    "declarationMap": true,
+    "target": "ES6",
+    "module": "commonjs",
+    "esModuleInterop": true
+  }
 }

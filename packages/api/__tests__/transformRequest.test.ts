@@ -7,7 +7,7 @@ describe('transformRequest', () => {
     const fixedTimestamp = '1578562676970';
 
     const api = new Api({
-      workspaceId: TEST_WORKSPACE_ID,
+      workspaceId: TEST_WORKSPACE_ID as string,
       transformRequest: [
         async (next, data) => {
           return next({
