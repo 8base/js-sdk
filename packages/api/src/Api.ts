@@ -8,6 +8,7 @@ import {
 } from 'graphql/language';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 import WebSocket from 'isomorphic-ws';
+import qs from 'qs';
 
 import { API_ENDPOINT, WS_ENDPOINT } from './constants';
 import { ApiHTTPError } from './errors/ApiHTTPError';
@@ -18,6 +19,7 @@ import {
   IFetchOptions,
   IGraphQLRequest,
   IGraphQLVariables,
+  IWebhookRequest,
 } from './types';
 import { ChainHandler } from './ChainHandler';
 import { ExecutionResult } from 'graphql';
@@ -213,6 +215,31 @@ export class Api {
 
   public closeSubscriptionConnection() {
     this.subscriptionClient.close();
+  }
+
+  public invoke(
+    functionName: string,
+    request: IWebhookRequest,
+    options?: IFetchOptions,
+  ) {
+    let webhookUrl = `${this.url}/webhook/${functionName}`;
+
+    if (request.path) {
+      webhookUrl = `${this.url}/webhook/${request.path}`;
+    }
+
+    if (request.data) {
+      webhookUrl = `${webhookUrl}${qs.stringify(request.data, {
+        addQueryPrefix: true,
+      })}`;
+    }
+
+    const fetchOptions = {
+      ...(options || {}),
+      method: request.method,
+    };
+
+    return fetch(webhookUrl, fetchOptions);
   }
 
   private getQueryDocument(query: string): DocumentNode {
