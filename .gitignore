@@ -2,3 +2,5 @@ lib
 node_modules
 .idea
 lerna-debug.log
+tsconfig.tsbuildinfo
+.env

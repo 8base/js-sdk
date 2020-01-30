@@ -15,8 +15,15 @@
   "homepage": "https://github.com/8base/js-sdk#readme",
   "scripts": {
     "test": "jest --verbose",
-    "clean": "rm -rf lib/*",
+    "test:server": "yarn build && webpack-dev-server --config ./__tests__/environment/webpack.config.js",
+    "clean": "rm -rf lib/* tsconfig.tsbuildinfo",
     "prebuild": "yarn run clean",
     "build": "tsc -b ."
+  },
+  "dependencies": {
+    "auth0-js": "^9.12.2"
+  },
+  "devDependencies": {
+    "@types/auth0-js": "^9.12.3"
   }
 }
