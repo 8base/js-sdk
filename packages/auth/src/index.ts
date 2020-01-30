@@ -1,1 +1,2 @@
-export class Auth {}
+export { Auth } from './Auth';
+export * from './types';
