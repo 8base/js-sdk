@@ -10,7 +10,8 @@ module.exports = {
     {
       ...baseConfig,
       displayName: 'jsdom',
-      testEnvironment: 'jsdom'
+      testEnvironment: 'jsdom',
+      globalSetup: './__tests__/setup/globalSetup.ts',
     }
   ]
 };

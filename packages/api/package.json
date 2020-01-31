@@ -14,7 +14,7 @@
     "url": "https://github.com/8base/js-sdk/issues"
   },
   "scripts": {
-    "test": "TEST_WORKSPACE_ID=ck4bg6wtu001808mg6a6u7mjh jest --verbose",
+    "test": "jest --verbose",
     "clean": "rm -rf lib/*",
     "prebuild": "yarn run clean",
     "build": "tsc -b .",

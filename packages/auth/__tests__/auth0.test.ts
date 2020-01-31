@@ -1,11 +1,11 @@
-const AUTH_PROFILE_ID = 'ck5wj03o7002u08mkg61waq28';
-const AUTH0_DOMAIN = 'secure.8base.com';
-const AUTH0_CLIENT_ID = 'lmGkw92PovWoDnNov74bFvrau2g9Efaw';
-
-const AUTH_EMAIL = 'vorobeez-8base+t1@yandex.ru';
-const AUTH_PASSWORD = '123456Az';
-
-const SERVER_URL = 'http://localhost:9000';
+const {
+  AUTH_PROFILE_ID,
+  AUTH0_DOMAIN,
+  AUTH0_CLIENT_ID,
+  AUTH_EMAIL,
+  AUTH_PASSWORD,
+  TEST_SERVER_URL,
+} = process.env as { [key: string]: string };
 
 jest.setTimeout(60000);
 
@@ -34,14 +34,14 @@ const createGlobalAuth = (
 
 describe('Auth0 Strategy', () => {
   beforeEach(async () => {
-    await page.goto(SERVER_URL);
+    await page.goto(TEST_SERVER_URL);
 
     await page.evaluate(
       createGlobalAuth,
       AUTH_PROFILE_ID,
       AUTH0_DOMAIN,
       AUTH0_CLIENT_ID,
-      SERVER_URL,
+      TEST_SERVER_URL,
     );
   });
 
@@ -78,14 +78,14 @@ describe('Auth0 Strategy', () => {
       waitUntil: 'networkidle2',
     });
 
-    expect(page.url()).toMatch(SERVER_URL);
+    expect(page.url()).toMatch(TEST_SERVER_URL);
 
     await page.evaluate(
       createGlobalAuth,
       AUTH_PROFILE_ID,
       AUTH0_DOMAIN,
       AUTH0_CLIENT_ID,
-      SERVER_URL,
+      TEST_SERVER_URL,
     );
 
     const authorizedData = await page.evaluate(() => {
@@ -154,14 +154,14 @@ describe('Auth0 Strategy', () => {
 
     await page.waitForNavigation();
 
-    expect(page.url()).toMatch(SERVER_URL);
+    expect(page.url()).toMatch(TEST_SERVER_URL);
 
     await page.evaluate(
       createGlobalAuth,
       AUTH_PROFILE_ID,
       AUTH0_DOMAIN,
       AUTH0_CLIENT_ID,
-      SERVER_URL,
+      TEST_SERVER_URL,
     );
 
     const currentUserData = await page.evaluate(() => {

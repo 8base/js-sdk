@@ -1,9 +1,11 @@
+require('dotenv').config();
+
 const { setup: setupDevServer } = require('jest-dev-server');
 const { setup: setupPuppeteer } = require('jest-environment-puppeteer');
 
-module.exports = async function globalSetup(globalConfig) {
+module.exports = async function globalSetup(globalConfig: any) {
   await setupDevServer({
-    command: "yarn test:server",
+    command: 'yarn test:server',
     launchTimeout: 50000,
     port: 9000,
   });
