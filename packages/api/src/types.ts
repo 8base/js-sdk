@@ -57,6 +57,14 @@ export interface IGraphQLRequest {
   variables?: IGraphQLVariables;
 }
 
+export interface IWebhookRequest {
+  method: string;
+  path?: string;
+  data?: {
+    [key: string]: string;
+  };
+}
+
 export type IHandlerFunction<T> = (
   next: (data: T) => Promise<T>,
   data: T,
