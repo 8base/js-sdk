@@ -1,6 +1,6 @@
 import { IStorage } from './types';
 
-export class StorageFacade<T extends {}> {
+export class StorageFacade<T> {
   private readonly storage: IStorage;
   private readonly storageKey: string;
 
@@ -13,7 +13,7 @@ export class StorageFacade<T extends {}> {
     }
   }
 
-  public getState(): T | {} {
+  public getState(): T {
     const stateJSON = this.storage.getItem(this.storageKey);
 
     return JSON.parse(stateJSON || '{}') || {};

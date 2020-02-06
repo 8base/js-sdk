@@ -103,7 +103,7 @@ describe('request', () => {
       }
     `);
 
-    expect(requestPromise).rejects.toThrow(
+    return expect(requestPromise).rejects.toThrow(
       'HTTP Error. Code: 400. Message: Bad Request.',
     );
   });
@@ -145,7 +145,7 @@ describe('request', () => {
       }
     `);
 
-    expect(responsePromise).rejects.toThrow(
+    return expect(responsePromise).rejects.toThrow(
       'Expected GraphQL query or mutation.',
     );
   });

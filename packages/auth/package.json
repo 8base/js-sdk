@@ -17,8 +17,7 @@
     "test": "jest --verbose",
     "test:server": "yarn build && webpack-dev-server --config ./__tests__/environment/webpack.config.js",
     "clean": "rm -rf lib/* tsconfig.tsbuildinfo",
-    "prebuild": "yarn run clean",
-    "build": "tsc -b ."
+    "build": "tsc"
   },
   "dependencies": {
     "auth0-js": "^9.12.2"

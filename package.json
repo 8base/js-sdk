@@ -3,7 +3,8 @@
   "private": true,
   "workspaces": [
     "packages/api",
-    "packages/auth"
+    "packages/auth",
+    "packages/8base"
   ],
   "scripts": {
     "postinstall": "lerna bootstrap",

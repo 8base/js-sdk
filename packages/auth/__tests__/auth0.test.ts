@@ -120,7 +120,7 @@ describe('Auth0 Strategy', () => {
 
   it('refreshes idToken', async () => {
     const refreshedAuthorizedData = await page.evaluate(() => {
-      return auth.refresh();
+      return auth.refreshToken();
     });
 
     expect(refreshedAuthorizedData).toMatchObject({

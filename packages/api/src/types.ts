@@ -1,8 +1,21 @@
 import { ExecutionResult } from 'graphql';
 import { ConnectionParams } from 'subscriptions-transport-ws';
+import ErrorCodes from '@8base/error-codes';
 
 import { ApiGraphQLError } from './errors/ApiGraphQLError';
-import { ApiHTTPError } from './errors/ApiHTTPError';
+
+export type IRerunFunction = (
+  newRequest?: Partial<IApiRequest>,
+) => Promise<ExecutionResult>;
+
+export type IErrorCallback = (
+  error: ApiGraphQLError,
+  rerun: IRerunFunction,
+) => void | Promise<ExecutionResult>;
+
+export type IErrorMap = {
+  [key in keyof typeof ErrorCodes | 'default']?: IErrorCallback;
+};
 
 export interface IFetchOptions {
   mode?: RequestInit['mode'];
@@ -16,18 +29,19 @@ export interface IFetchOptions {
   headers?: RequestInit['headers'];
 }
 
-export type ApiHeaders =
+export type IApiHeaders =
   | RequestInit['headers']
-  | (() => RequestInit['headers']);
+  | (() => RequestInit['headers'])
+  | (() => Promise<RequestInit['headers']>);
 
 export interface IApiOptions {
   workspaceId: string;
-  headers?: ApiHeaders;
-  catchErrors?: (error: ApiGraphQLError | ApiHTTPError) => void;
-  transformRequest?: Array<IHandlerFunction<IGraphQLRequest>>;
+  headers?: IApiHeaders;
+  catchErrors?: IErrorCallback | IErrorMap;
+  transformRequest?: Array<IHandlerFunction<IApiRequest>>;
   transformResponse?: Array<
     IHandlerFunction<{
-      request: IGraphQLRequest;
+      request: IApiRequest;
       response: ExecutionResult;
     }>
   >;
@@ -52,9 +66,10 @@ export interface IGraphQLVariables {
   [key: string]: any;
 }
 
-export interface IGraphQLRequest {
+export interface IApiRequest {
   query: string;
   variables?: IGraphQLVariables;
+  fetchOptions: IFetchOptions;
 }
 
 export interface IWebhookRequest {

@@ -6,14 +6,12 @@ export interface IStorage {
   removeItem(key: string): void;
 }
 
-export enum AuthStrategy {
+export const enum AuthStrategy {
   CustomAuth = 'CUSTOM_AUTH',
   Auth0Auth = 'AUTH0_AUTH',
 }
 
-export interface ICommonAuthSettings {
-  authProfileId: string;
-}
+export interface ICommonAuthSettings {} // tslint:disable-line
 
 export interface IAuth0AuthSettings extends ICommonAuthSettings {
   clientId: string;
@@ -22,18 +20,35 @@ export interface IAuth0AuthSettings extends ICommonAuthSettings {
   logoutRedirectUri: string;
 }
 
-export interface IAuthOptions<T extends AuthStrategy> {
-  strategy: T;
-  settings: T extends AuthStrategy.Auth0Auth
-    ? IAuth0AuthSettings
-    : ICommonAuthSettings;
+export interface ICustomAuthOptions {
+  strategy: AuthStrategy.CustomAuth;
+  settings: ICommonAuthSettings;
 }
 
-export interface IAuth0State {
+export interface IAuth0AuthOptions {
+  strategy: AuthStrategy.Auth0Auth;
+  settings: IAuth0AuthSettings;
+}
+
+export type AuthOptions = ICustomAuthOptions | IAuth0AuthOptions;
+
+export interface IAuthState {
   idToken: string;
+  email: string;
+}
+
+export interface IAuth0State extends IAuthState {
   accessToken: string;
   expiresIn: number;
-  email: string;
   emailVerified: string;
   idTokenPayload: Auth0DecodedHash['idTokenPayload'];
+}
+
+export interface IAuth {
+  authorize(provider?: string, options?: {}): void;
+  getAuthorizedData(): Promise<any>;
+  refreshToken(): Promise<any>;
+  forgotPassword(email: string): Promise<string>;
+  signOut(options?: {}): void;
+  currentUser(): any;
 }

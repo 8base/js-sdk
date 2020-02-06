@@ -15,12 +15,12 @@
   },
   "scripts": {
     "test": "jest --verbose",
-    "clean": "rm -rf lib/*",
-    "prebuild": "yarn run clean",
-    "build": "tsc -b .",
+    "clean": "rm -rf lib/* tsconfig.tsbuildinfo",
+    "build": "tsc",
     "tslint": "tslint \"{src,__tests__}/**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "@8base/error-codes": "^1.0.21",
     "cross-fetch": "^3.0.4",
     "graphql": "^14.5.8",
     "isomorphic-ws": "^4.0.1",

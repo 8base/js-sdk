@@ -1,36 +1,35 @@
 import {
   AuthStrategy,
-  IAuth0AuthSettings,
-  IAuthOptions,
+  AuthOptions,
   IStorage,
+  IAuth0AuthSettings,
+  IAuthState,
+  IAuth,
 } from './types';
 import { StorageFacade } from './StorageFacade';
 import { Auth0Strategy } from './Auth0Strategy';
 
 const DEFAULT_STORAGE_KEY = 'auth_storage';
 
-export class Auth<T extends AuthStrategy> {
-  private readonly storage: StorageFacade<{}>;
-  // private readonly authProfileId: string;
+export class Auth implements IAuth {
+  public readonly storage: StorageFacade<IAuthState>;
   private readonly authStrategy?: Auth0Strategy;
 
   constructor(
-    options: IAuthOptions<T>,
+    options: AuthOptions,
     storage: IStorage = window.localStorage,
     storageKey: string = DEFAULT_STORAGE_KEY,
   ) {
     const { strategy, settings } = options;
-    // const { authProfileId } = settings;
 
-    // this.authProfileId = authProfileId;
-    this.storage = new StorageFacade<{}>(storage, storageKey);
+    this.storage = new StorageFacade<IAuthState>(storage, storageKey);
 
     if (strategy === AuthStrategy.Auth0Auth) {
       this.authStrategy = new Auth0Strategy(settings as IAuth0AuthSettings);
     }
   }
 
-  public authorize(provider?: string, options?: any): void {
+  public authorize(provider?: string, options?: {}) {
     if (!this.authStrategy) {
       throw new Error("Current strategy doesn't support authorize method");
     }
@@ -38,7 +37,7 @@ export class Auth<T extends AuthStrategy> {
     this.authStrategy.authorize(provider, options);
   }
 
-  public async getAuthorizedData(): Promise<any | null> {
+  public async getAuthorizedData(): Promise<any> {
     if (!this.authStrategy) {
       throw new Error("Current strategy doesn't support parseHash method");
     }
@@ -56,7 +55,7 @@ export class Auth<T extends AuthStrategy> {
     return null;
   }
 
-  public async refresh(): Promise<any | null> {
+  public async refreshToken(): Promise<any> {
     if (!this.authStrategy) {
       throw new Error("Current strategy doesn't support refresh method");
     }
@@ -82,7 +81,7 @@ export class Auth<T extends AuthStrategy> {
     return this.authStrategy.forgotPassword(email);
   }
 
-  public signOut(options: any): void {
+  public signOut(options?: {}) {
     this.storage.purgeState();
 
     this.authStrategy?.signOut(options);
