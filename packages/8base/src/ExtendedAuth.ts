@@ -1,5 +1,12 @@
 import { Api, ApiGraphQLError } from '@8base/api';
-import { Auth, IAuth, AuthEvent, AuthCallback, AuthorizeOptions, LogoutOptions } from '@8base/auth';
+import {
+  Auth,
+  IAuth,
+  AuthEvent,
+  AuthCallback,
+  AuthorizeOptions,
+  LogoutOptions,
+} from '@8base/auth';
 
 import { IExtendedAuthOptions, IGraphQLAuth, IUser, UserCreate } from './types';
 import {
@@ -39,6 +46,10 @@ export class ExtendedAuth implements IAuth, IGraphQLAuth {
 
   public signOut(options?: LogoutOptions) {
     return this.auth.signOut(options);
+  }
+
+  public currentUser() {
+    return this.auth.currentUser();
   }
 
   public on(event: AuthEvent, callback: AuthCallback) {

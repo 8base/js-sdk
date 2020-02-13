@@ -2,6 +2,12 @@ import { Auth0DecodedHash, AuthorizeOptions, LogoutOptions } from 'auth0-js';
 
 export { AuthorizeOptions, LogoutOptions };
 
+export interface IStorage {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+}
+
 export const enum AuthStrategy {
   // CustomAuth = 'CUSTOM_AUTH',
   Auth0Auth = 'AUTH0_AUTH',
@@ -25,11 +31,11 @@ export interface IAuth0AuthSettings {
 export interface IAuth0AuthOptions {
   strategy: AuthStrategy;
   settings: IAuth0AuthSettings;
-  onAuthorized: (data: Auth0DecodedHash) => void;
-  onAuthorizeFailed: (error: Error) => void;
-  onRefreshed: (data: Auth0DecodedHash) => void;
-  onRefreshFailed: (error: Error) => void;
-  onSignedOut: () => void;
+  onAuthorized?: (data: Auth0DecodedHash) => void;
+  onAuthorizeFailed?: (error: Error) => void;
+  onRefreshed?: (data: Auth0DecodedHash) => void;
+  onRefreshFailed?: (error: Error) => void;
+  onSignedOut?: () => void;
 }
 
 export type AuthOptions = IAuth0AuthOptions;
@@ -42,5 +48,15 @@ export interface IAuth {
   refreshToken(): Promise<Auth0DecodedHash | null>;
   forgotPassword(email: string): Promise<string>;
   signOut(options?: {}): void;
+  currentUser(): IAuthStorageState;
   on(event: AuthEvent, callback: AuthCallback): void;
+}
+
+export interface IAuthStorageState {
+  idToken: string;
+  email: string;
+  accessToken: string;
+  expiresIn: number;
+  emailVerified: string;
+  idTokenPayload: Auth0DecodedHash['idTokenPayload'];
 }

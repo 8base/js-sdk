@@ -1,12 +1,15 @@
-import { AuthOptions, Auth } from '@8base/auth';
+import { AuthOptions, Auth, IStorage } from '@8base/auth';
 import { IApiOptions, Api } from '@8base/api';
 
 export interface IEightBaseOptions {
   workspaceId: string;
-  authProfileId: string;
-  auth: AuthOptions;
+  auth: AuthOptions & {
+    settings: AuthOptions['settings'] & { authProfileId: string };
+  };
   api: Omit<IApiOptions, 'workspaceId'>;
-  autoTokenRefresh: boolean;
+  autoTokenRefresh?: boolean;
+  storage?: IStorage;
+  storageKey?: string;
 }
 
 export interface IExtendedAuthOptions {
