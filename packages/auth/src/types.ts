@@ -1,54 +1,46 @@
-import { Auth0DecodedHash } from 'auth0-js';
+import { Auth0DecodedHash, AuthorizeOptions, LogoutOptions } from 'auth0-js';
 
-export interface IStorage {
-  getItem(key: string): string | null;
-  setItem(key: string, value: string): void;
-  removeItem(key: string): void;
-}
+export { AuthorizeOptions, LogoutOptions };
 
 export const enum AuthStrategy {
-  CustomAuth = 'CUSTOM_AUTH',
+  // CustomAuth = 'CUSTOM_AUTH',
   Auth0Auth = 'AUTH0_AUTH',
 }
 
-export interface ICommonAuthSettings {} // tslint:disable-line
+export enum AuthEvent {
+  Authorized = 'authorized',
+  AuthorizeFailed = 'authorizeFailed',
+  Refreshed = 'refreshed',
+  RefreshFailed = 'refreshFailed',
+  SignedOut = 'signedOut',
+}
 
-export interface IAuth0AuthSettings extends ICommonAuthSettings {
+export interface IAuth0AuthSettings {
   clientId: string;
   domain: string;
   redirectUri: string;
   logoutRedirectUri: string;
 }
 
-export interface ICustomAuthOptions {
-  strategy: AuthStrategy.CustomAuth;
-  settings: ICommonAuthSettings;
-}
-
 export interface IAuth0AuthOptions {
-  strategy: AuthStrategy.Auth0Auth;
+  strategy: AuthStrategy;
   settings: IAuth0AuthSettings;
+  onAuthorized: (data: Auth0DecodedHash) => void;
+  onAuthorizeFailed: (error: Error) => void;
+  onRefreshed: (data: Auth0DecodedHash) => void;
+  onRefreshFailed: (error: Error) => void;
+  onSignedOut: () => void;
 }
 
-export type AuthOptions = ICustomAuthOptions | IAuth0AuthOptions;
+export type AuthOptions = IAuth0AuthOptions;
 
-export interface IAuthState {
-  idToken: string;
-  email: string;
-}
-
-export interface IAuth0State extends IAuthState {
-  accessToken: string;
-  expiresIn: number;
-  emailVerified: string;
-  idTokenPayload: Auth0DecodedHash['idTokenPayload'];
-}
+export type AuthCallback = (a: any) => void;
 
 export interface IAuth {
   authorize(provider?: string, options?: {}): void;
-  getAuthorizedData(): Promise<any>;
-  refreshToken(): Promise<any>;
+  getAuthorizedData(): Promise<Auth0DecodedHash | null>;
+  refreshToken(): Promise<Auth0DecodedHash | null>;
   forgotPassword(email: string): Promise<string>;
   signOut(options?: {}): void;
-  currentUser(): any;
+  on(event: AuthEvent, callback: AuthCallback): void;
 }

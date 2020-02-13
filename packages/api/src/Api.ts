@@ -126,7 +126,7 @@ export class Api {
     });
     const headers = await Api.composeHeaders(
       this.headers,
-      transformedApiRequest.fetchOptions.headers,
+      transformedApiRequest.fetchOptions?.headers || {},
       {
         'content-type': 'application/json',
       },

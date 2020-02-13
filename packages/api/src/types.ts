@@ -69,7 +69,7 @@ export interface IGraphQLVariables {
 export interface IApiRequest {
   query: string;
   variables?: IGraphQLVariables;
-  fetchOptions: IFetchOptions;
+  fetchOptions?: IFetchOptions;
 }
 
 export interface IWebhookRequest {

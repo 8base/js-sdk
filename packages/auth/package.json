@@ -20,7 +20,8 @@
     "build": "tsc"
   },
   "dependencies": {
-    "auth0-js": "^9.12.2"
+    "auth0-js": "^9.12.2",
+    "eventemitter3": "^4.0.0"
   },
   "devDependencies": {
     "@types/auth0-js": "^9.12.3"

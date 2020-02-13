@@ -1,5 +1,5 @@
 import { Api, ApiGraphQLError } from '@8base/api';
-import { Auth, IAuth } from '@8base/auth';
+import { Auth, IAuth, AuthEvent, AuthCallback, AuthorizeOptions, LogoutOptions } from '@8base/auth';
 
 import { IExtendedAuthOptions, IGraphQLAuth, IUser, UserCreate } from './types';
 import {
@@ -21,7 +21,7 @@ export class ExtendedAuth implements IAuth, IGraphQLAuth {
     this.authProfileId = authProfileId;
   }
 
-  public authorize(provider?: string, options?: {}) {
+  public authorize(provider?: string, options?: AuthorizeOptions) {
     return this.auth.authorize(provider, options);
   }
 
@@ -37,12 +37,12 @@ export class ExtendedAuth implements IAuth, IGraphQLAuth {
     return this.auth.forgotPassword(email);
   }
 
-  public signOut(options?: {}) {
+  public signOut(options?: LogoutOptions) {
     return this.auth.signOut(options);
   }
 
-  public currentUser() {
-    return this.auth.currentUser();
+  public on(event: AuthEvent, callback: AuthCallback) {
+    return this.auth.on(event, callback);
   }
 
   public async signIn(
@@ -113,14 +113,16 @@ export class ExtendedAuth implements IAuth, IGraphQLAuth {
       user,
     };
 
+    const fetchOptions = {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    };
+
     const result = await this.api.request(
       USER_SIGN_UP_WITH_TOKEN_MUTATION,
       variables,
-      {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      },
+      fetchOptions,
     );
 
     if (ApiGraphQLError.hasError(result)) {

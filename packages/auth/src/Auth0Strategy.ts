@@ -3,7 +3,7 @@ import auth0, {
   AuthorizeOptions,
   LogoutOptions,
 } from 'auth0-js';
-import { IAuth0AuthSettings, IAuth0State } from './types';
+import { IAuth0AuthSettings } from './types';
 
 export class Auth0Strategy {
   private readonly logoutRedirectUri: string;
@@ -89,18 +89,5 @@ export class Auth0Strategy {
         },
       );
     });
-  }
-
-  public convertAuthDataToState(auth0Data: Auth0DecodedHash = {}): IAuth0State {
-    const { idToken, accessToken, expiresIn, idTokenPayload } = auth0Data;
-
-    return {
-      idToken: idToken || '',
-      accessToken: accessToken || '',
-      expiresIn: expiresIn || 0,
-      email: idTokenPayload?.email || '',
-      emailVerified: idTokenPayload?.email_verified,
-      idTokenPayload: idTokenPayload || null,
-    };
   }
 }
