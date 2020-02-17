@@ -1,4 +1,8 @@
-require('dotenv').config();
+const path = require('path');
+
+require('dotenv').config({
+  path: path.resolve('../../', '.env'),
+});
 
 const { setup: setupDevServer } = require('jest-dev-server');
 const { setup: setupPuppeteer } = require('jest-environment-puppeteer');
