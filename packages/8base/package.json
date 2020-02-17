@@ -1,0 +1,26 @@
+{
+  "name": "8base-js-sdk",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "8base",
+  "homepage": "https://github.com/8base/js-sdk#readme",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "jest --verbose",
+    "clean": "rm -rf lib/* tsconfig.tsbuildinfo",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/8base/js-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/8base/js-sdk/issues"
+  },
+  "dependencies": {
+    "@8base-js-sdk/api": "^0.0.0",
+    "@8base-js-sdk/auth": "^0.0.0",
+    "@8base/error-codes": "^1.0.21"
+  }
+}

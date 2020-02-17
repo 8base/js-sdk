@@ -1,14 +1,14 @@
-import { IGraphQLRequest } from '../types';
+import { IApiRequest } from '../types';
 
 export class ApiHTTPError extends Error {
   public static hasError(httpResponse: Response) {
     return !httpResponse.ok;
   }
 
-  public request: IGraphQLRequest;
+  public request: IApiRequest;
   public httpResponse: Response;
 
-  constructor(request: IGraphQLRequest, httpResponse: Response) {
+  constructor(request: IApiRequest, httpResponse: Response) {
     let message = 'HTTP Error.';
 
     if (httpResponse.status) {

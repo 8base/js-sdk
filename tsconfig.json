@@ -1,7 +1,8 @@
 {
   "references": [
     { "path": "packages/api" },
-    { "path": "packages/auth" }
+    { "path": "packages/auth" },
+    { "path": "packages/8base"}
   ],
   "extends": "./config/tsconfig.base.json"
 }

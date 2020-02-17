@@ -24,7 +24,7 @@ const runDelayedMutation = (api: Api, delay = 3000) => {
   }, delay);
 };
 
-describe('subscription', () => {
+describe.skip('subscription', () => {
   let api: Api;
   let unsubscribe: () => void;
 

@@ -70,7 +70,9 @@ describe('mutation', () => {
       }
     `);
 
-    expect(responsePromise).rejects.toThrow('Expected GraphQL mutation.');
+    return expect(responsePromise).rejects.toThrow(
+      'Expected GraphQL mutation.',
+    );
   });
 
   it("doesn't run subscriptions", () => {
@@ -84,6 +86,8 @@ describe('mutation', () => {
       }
     `);
 
-    expect(responsePromise).rejects.toThrow('Expected GraphQL mutation.');
+    return expect(responsePromise).rejects.toThrow(
+      'Expected GraphQL mutation.',
+    );
   });
 });

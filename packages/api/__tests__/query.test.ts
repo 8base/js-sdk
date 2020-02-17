@@ -72,7 +72,7 @@ describe('query', () => {
       { data: { timestamp: Date.now() } },
     );
 
-    expect(responsePromise).rejects.toThrow('Expected GraphQL query.');
+    return expect(responsePromise).rejects.toThrow('Expected GraphQL query.');
   });
 
   it("doesn't run subscriptions", () => {
@@ -86,6 +86,6 @@ describe('query', () => {
       }
     `);
 
-    expect(responsePromise).rejects.toThrow('Expected GraphQL query.');
+    return expect(responsePromise).rejects.toThrow('Expected GraphQL query.');
   });
 });

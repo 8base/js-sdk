@@ -1,4 +1,6 @@
-import { Auth0DecodedHash } from 'auth0-js';
+import { Auth0DecodedHash, AuthorizeOptions, LogoutOptions } from 'auth0-js';
+
+export { AuthorizeOptions, LogoutOptions };
 
 export interface IStorage {
   getItem(key: string): string | null;
@@ -6,34 +8,55 @@ export interface IStorage {
   removeItem(key: string): void;
 }
 
-export enum AuthStrategy {
-  CustomAuth = 'CUSTOM_AUTH',
+export const enum AuthStrategy {
+  // CustomAuth = 'CUSTOM_AUTH',
   Auth0Auth = 'AUTH0_AUTH',
 }
 
-export interface ICommonAuthSettings {
-  authProfileId: string;
+export enum AuthEvent {
+  Authorized = 'authorized',
+  AuthorizeFailed = 'authorizeFailed',
+  Refreshed = 'refreshed',
+  RefreshFailed = 'refreshFailed',
+  SignedOut = 'signedOut',
 }
 
-export interface IAuth0AuthSettings extends ICommonAuthSettings {
+export interface IAuth0AuthSettings {
   clientId: string;
   domain: string;
   redirectUri: string;
   logoutRedirectUri: string;
 }
 
-export interface IAuthOptions<T extends AuthStrategy> {
-  strategy: T;
-  settings: T extends AuthStrategy.Auth0Auth
-    ? IAuth0AuthSettings
-    : ICommonAuthSettings;
+export interface IAuth0AuthOptions {
+  strategy: AuthStrategy;
+  settings: IAuth0AuthSettings;
+  onAuthorized?: (data: Auth0DecodedHash) => void;
+  onAuthorizeFailed?: (error: Error) => void;
+  onRefreshed?: (data: Auth0DecodedHash) => void;
+  onRefreshFailed?: (error: Error) => void;
+  onSignedOut?: () => void;
 }
 
-export interface IAuth0State {
+export type AuthOptions = IAuth0AuthOptions;
+
+export type AuthCallback = (a: any) => void;
+
+export interface IAuth {
+  authorize(provider?: string, options?: {}): void;
+  getAuthorizedData(): Promise<Auth0DecodedHash | null>;
+  refreshToken(): Promise<Auth0DecodedHash | null>;
+  forgotPassword(email: string): Promise<string>;
+  signOut(options?: {}): void;
+  currentUser(): IAuthStorageState;
+  on(event: AuthEvent, callback: AuthCallback): void;
+}
+
+export interface IAuthStorageState {
   idToken: string;
+  email: string;
   accessToken: string;
   expiresIn: number;
-  email: string;
   emailVerified: string;
   idTokenPayload: Auth0DecodedHash['idTokenPayload'];
 }

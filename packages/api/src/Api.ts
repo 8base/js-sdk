@@ -1,11 +1,4 @@
 import 'cross-fetch/polyfill';
-import {
-  DocumentNode,
-  Kind,
-  OperationDefinitionNode,
-  OperationTypeNode,
-  parse,
-} from 'graphql/language';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 import WebSocket from 'isomorphic-ws';
 import qs from 'qs';
@@ -14,28 +7,65 @@ import { API_ENDPOINT, WS_ENDPOINT } from './constants';
 import { ApiHTTPError } from './errors/ApiHTTPError';
 import { ApiGraphQLError } from './errors/ApiGraphQLError';
 import {
+  IApiHeaders,
   IApiOptions,
   IApiSubscriptionOptions,
   IFetchOptions,
-  IGraphQLRequest,
+  IApiRequest,
   IGraphQLVariables,
   IWebhookRequest,
 } from './types';
 import { ChainHandler } from './ChainHandler';
 import { ExecutionResult } from 'graphql';
+import { GraphQLController } from './GraphQLController';
+import { ErrorHandler } from './ErrorHandler';
 
-const GRAPHQL_FULL_QUERY_PATTERN = /^\s*query/im;
+interface ITransformResponseData {
+  request: IApiRequest;
+  response: ExecutionResult;
+}
 
 export class Api {
+  public static async composeHeaders(
+    ...headersArr: IApiHeaders[]
+  ): Promise<RequestInit['headers']> {
+    const headersObjects: Array<RequestInit['headers']> = [];
+    const headersPromises: Array<Promise<RequestInit['headers']>> = [];
+
+    headersArr.filter(Boolean).forEach(headers => {
+      if (typeof headers === 'function') {
+        const headersResult = headers();
+
+        if (headersResult instanceof Promise) {
+          headersPromises.push(headersResult);
+        } else {
+          headersObjects.push(headersResult);
+        }
+      } else {
+        headersObjects.push(headers);
+      }
+    });
+
+    const headersObjectsFromPromises = await Promise.all(headersPromises);
+
+    const composedHeaders = headersObjects
+      .concat(headersObjectsFromPromises)
+      .reduce((acc, headers) => {
+        return {
+          ...acc,
+          ...headers,
+        };
+      }, {});
+
+    return composedHeaders;
+  }
+
   public readonly subscriptionClient: SubscriptionClient;
   private readonly url: string;
   private readonly headers: IApiOptions['headers'];
-  private readonly catchErrors: IApiOptions['catchErrors'];
-  private readonly requestHandler: ChainHandler<IGraphQLRequest>;
-  private readonly responseHandler: ChainHandler<{
-    request: IGraphQLRequest;
-    response: ExecutionResult;
-  }>;
+  private readonly errorHandler: ErrorHandler;
+  private readonly requestHandler: ChainHandler<IApiRequest>;
+  private readonly responseHandler: ChainHandler<ITransformResponseData>;
 
   constructor(options: IApiOptions) {
     const {
@@ -47,25 +77,10 @@ export class Api {
     } = options;
     let { transformResponse = [] } = options;
 
-    if (typeof catchErrors === 'function') {
+    if (catchErrors) {
       transformResponse = [
         async (next, data) => {
-          const transformedData = await next(data);
-
-          if (
-            transformedData.response &&
-            ApiGraphQLError.hasError(transformedData.response) &&
-            typeof this.catchErrors === 'function'
-          ) {
-            this.catchErrors(
-              new ApiGraphQLError(
-                transformedData.request,
-                transformedData.response,
-              ),
-            );
-          }
-
-          return transformedData;
+          return this.catchApiGraphQLError(next, data);
         },
         ...transformResponse,
       ];
@@ -73,7 +88,7 @@ export class Api {
 
     this.url = `${API_ENDPOINT}/${workspaceId}`;
     this.headers = headers;
-    this.catchErrors = catchErrors;
+    this.errorHandler = new ErrorHandler(catchErrors);
     this.requestHandler = ChainHandler.fromArray(transformRequest);
     this.responseHandler = ChainHandler.fromArray(transformResponse);
     this.subscriptionClient = this.prepareSubscriptionClient(
@@ -85,45 +100,53 @@ export class Api {
   public async request(
     query: string,
     variables?: IGraphQLVariables,
-    options: IFetchOptions = { headers: {} },
+    fetchOptions: IFetchOptions = { headers: {} },
   ): Promise<ExecutionResult> {
-    const queryDocument = this.getQueryDocument(query);
-    const operationDefinition = this.getOperationDefinition(queryDocument);
+    const queryDocument = GraphQLController.getQueryDocument(query);
+    const operationDefinition = GraphQLController.getOperationDefinition(
+      queryDocument,
+    );
     const isValidOperation =
-      this.isOperation('mutation', operationDefinition) ||
-      this.isOperation('query', operationDefinition);
+      GraphQLController.isOperation('mutation', operationDefinition) ||
+      GraphQLController.isOperation('query', operationDefinition);
 
     if (!isValidOperation) {
       throw new Error('Expected GraphQL query or mutation.');
     }
 
-    const request: IGraphQLRequest = await this.requestHandler.handle({
+    const transformedApiRequest = await this.requestHandler.handle({
       query,
       variables,
+      fetchOptions,
     });
 
-    const body = JSON.stringify(request);
-    const headers = this.composeHeaders(options.headers);
+    const body = JSON.stringify({
+      query: transformedApiRequest.query,
+      variables: transformedApiRequest.variables,
+    });
+    const headers = await Api.composeHeaders(
+      this.headers,
+      transformedApiRequest.fetchOptions?.headers || {},
+      {
+        'content-type': 'application/json',
+      },
+    );
 
     const httpResponse = await fetch(this.url, {
-      ...options,
+      ...transformedApiRequest.fetchOptions,
       method: 'POST',
       body,
       headers,
     });
 
     if (ApiHTTPError.hasError(httpResponse)) {
-      const httpError = new ApiHTTPError(request, httpResponse);
-
-      if (typeof this.catchErrors === 'function') {
-        this.catchErrors(httpError);
-      }
+      const httpError = new ApiHTTPError(transformedApiRequest, httpResponse);
 
       throw httpError;
     }
 
     const { response } = await this.responseHandler.handle({
-      request,
+      request: transformedApiRequest,
       response: await httpResponse.json(),
     });
 
@@ -141,10 +164,12 @@ export class Api {
     variables?: IGraphQLVariables,
     options?: IFetchOptions,
   ): Promise<ExecutionResult> {
-    const queryDocument = this.getQueryDocument(query);
-    const operationDefinition = this.getOperationDefinition(queryDocument);
+    const queryDocument = GraphQLController.getQueryDocument(query);
+    const operationDefinition = GraphQLController.getOperationDefinition(
+      queryDocument,
+    );
 
-    if (!this.isOperation('query', operationDefinition)) {
+    if (!GraphQLController.isOperation('query', operationDefinition)) {
       throw new Error('Expected GraphQL query.');
     }
 
@@ -165,21 +190,23 @@ export class Api {
     // It's not possible to differentiate "query { someQuery }"
     // from "{ someQuery }" form by ast parser means
     // so it checks for "query { someQuery }" form by plain regular expression
-    if (GRAPHQL_FULL_QUERY_PATTERN.test(query)) {
+    if (GraphQLController.doesStartWithQuery(query)) {
       throw new Error('Expected GraphQL mutation.');
     }
 
-    const queryDocument = this.getQueryDocument(query);
-    const operationDefinition = this.getOperationDefinition(queryDocument);
+    const queryDocument = GraphQLController.getQueryDocument(query);
+    const operationDefinition = GraphQLController.getOperationDefinition(
+      queryDocument,
+    );
 
-    if (this.isOperation('subscription', operationDefinition)) {
+    if (GraphQLController.isOperation('subscription', operationDefinition)) {
       throw new Error('Expected GraphQL mutation.');
     }
 
     // By default operation without manual query/mutation keyword
     // (i.e. "{ someResolver { field1 field2 }}") parsed as a query.
     // The method changes it to mutation manually.
-    if (this.isOperation('query', operationDefinition)) {
+    if (GraphQLController.isOperation('query', operationDefinition)) {
       query = `mutation ${query}`;
     }
 
@@ -242,31 +269,32 @@ export class Api {
     return fetch(webhookUrl, fetchOptions);
   }
 
-  private getQueryDocument(query: string): DocumentNode {
-    return parse(query);
-  }
+  private async catchApiGraphQLError(
+    next: (data: ITransformResponseData) => Promise<ITransformResponseData>,
+    data: ITransformResponseData,
+  ): Promise<ITransformResponseData> {
+    if (data.response && ApiGraphQLError.hasError(data.response)) {
+      const result = this.errorHandler.handle(
+        new ApiGraphQLError(data.request, data.response),
+        newRequest =>
+          this.request(
+            newRequest?.query || data.request.query,
+            newRequest?.variables || data.request.variables,
+            newRequest?.fetchOptions || data.request.fetchOptions,
+          ),
+      );
 
-  private getOperationDefinition(root: DocumentNode): OperationDefinitionNode {
-    return root.definitions.find(
-      definition => definition.kind === Kind.OPERATION_DEFINITION,
-    ) as OperationDefinitionNode;
-  }
+      if (result && result instanceof Promise) {
+        const newResponse = await result;
 
-  private isOperation(
-    operationType: OperationTypeNode,
-    operationDefinition: OperationDefinitionNode,
-  ): boolean {
-    return operationDefinition.operation === operationType;
-  }
+        return next({
+          request: data.request,
+          response: newResponse,
+        });
+      }
+    }
 
-  private composeHeaders(
-    headers: RequestInit['headers'] = {},
-  ): RequestInit['headers'] {
-    return {
-      ...(typeof this.headers === 'function' ? this.headers() : this.headers),
-      ...headers,
-      'content-type': 'application/json',
-    };
+    return next(data);
   }
 
   private prepareSubscriptionClient(
