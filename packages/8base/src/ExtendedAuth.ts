@@ -1,4 +1,4 @@
-import { Api, ApiGraphQLError } from '@8base/api';
+import { Api, ApiGraphQLError } from '@8base-js-sdk/api';
 import {
   Auth,
   IAuth,
@@ -6,7 +6,7 @@ import {
   AuthCallback,
   AuthorizeOptions,
   LogoutOptions,
-} from '@8base/auth';
+} from '@8base-js-sdk/auth';
 
 import { IExtendedAuthOptions, IGraphQLAuth, IUser, UserCreate } from './types';
 import {

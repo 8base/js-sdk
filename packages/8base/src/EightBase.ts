@@ -1,10 +1,9 @@
-import { Auth } from '@8base/auth';
-import { Api, ApiGraphQLError } from '@8base/api';
+import { Auth } from '@8base-js-sdk/auth';
+import { Api, ApiGraphQLError, IRerunFunction } from '@8base-js-sdk/api';
 import ErrorCodes from '@8base/error-codes';
 
 import { ExtendedAuth } from './ExtendedAuth';
 import { IEightBaseOptions } from './types';
-import { IRerunFunction } from '@8base/api/lib';
 
 export class EightBase {
   public readonly auth: ExtendedAuth;

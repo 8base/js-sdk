@@ -1,5 +1,5 @@
-import { AuthOptions, Auth, IStorage } from '@8base/auth';
-import { IApiOptions, Api } from '@8base/api';
+import { AuthOptions, Auth, IStorage } from '@8base-js-sdk/auth';
+import { IApiOptions, Api } from '@8base-js-sdk/api';
 
 export interface IEightBaseOptions {
   workspaceId: string;

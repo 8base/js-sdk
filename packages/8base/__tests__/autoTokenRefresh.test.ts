@@ -1,4 +1,4 @@
-jest.mock('@8base/auth', () => {
+jest.mock('@8base-js-sdk/auth', () => {
   const currentUser = jest.fn();
   const refreshToken = jest.fn();
 
@@ -20,7 +20,7 @@ jest.mock('@8base/auth', () => {
 import { EightBase, AuthStrategy } from '../src';
 import ErrorCodes from '@8base/error-codes';
 // @ts-ignore
-import { refreshToken, currentUser } from '@8base/auth';
+import { refreshToken, currentUser } from '@8base-js-sdk/auth';
 
 const {
   AUTH_PROFILE_ID,
