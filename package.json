@@ -12,7 +12,10 @@
     "prettier:write": "prettier --write \"packages/*/{src,__tests__}/**/*.{ts,tsx}\"",
     "tslint": "tslint \"packages/*/{src,__tests__}/**/*.{ts,tsx}\" --exclude \"packages/*/__tests__/setup/*\"",
     "build": "lerna run build",
-    "test": "lerna run test --stream"
+    "test": "lerna run test --stream",
+    "version": "lerna version",
+    "prepublish": "yarn run build",
+    "publish": "lerna publish from-package --yes"
   },
   "devDependencies": {
     "@types/expect-puppeteer": "^4.4.0",
