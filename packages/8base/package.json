@@ -1,6 +1,6 @@
 {
   "name": "8base-js-sdk",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "> TODO: description",
   "author": "8base",
   "homepage": "https://github.com/8base/js-sdk#readme",
@@ -19,8 +19,8 @@
     "url": "https://github.com/8base/js-sdk/issues"
   },
   "dependencies": {
-    "@8base-js-sdk/api": "^0.0.0",
-    "@8base-js-sdk/auth": "^0.0.0",
+    "@8base-js-sdk/api": "^0.1.0",
+    "@8base-js-sdk/auth": "^0.1.0",
     "@8base/error-codes": "^1.0.21"
   }
 }
