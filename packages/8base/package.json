@@ -22,5 +22,8 @@
     "@8base-js-sdk/api": "^0.1.0",
     "@8base-js-sdk/auth": "^0.1.0",
     "@8base/error-codes": "^1.0.21"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

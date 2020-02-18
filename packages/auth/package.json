@@ -25,5 +25,8 @@
   },
   "devDependencies": {
     "@types/auth0-js": "^9.12.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

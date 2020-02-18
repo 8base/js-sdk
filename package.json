@@ -14,7 +14,6 @@
     "build": "lerna run build",
     "test": "lerna run test --stream",
     "version": "lerna version",
-    "prepublish": "yarn run build",
     "publish": "lerna publish from-package --yes"
   },
   "devDependencies": {
