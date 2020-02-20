@@ -1,6 +1,6 @@
 import ErrorCodes from '@8base/error-codes';
 
-import { Api, IRerunFunction } from '../src';
+import Api, { IRerunFunction } from '../src';
 import { ApiHTTPError } from '../src/errors/ApiHTTPError';
 import { ApiGraphQLError } from '../src/errors/ApiGraphQLError';
 

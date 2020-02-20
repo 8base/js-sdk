@@ -1,3 +1,3 @@
-import { Auth } from '../../../lib/index.js';
+import Auth from '../../../lib/index.js';
 
 window.Auth = Auth;

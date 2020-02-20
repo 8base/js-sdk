@@ -1,5 +1,5 @@
-import { Auth } from '@8base-js-sdk/auth';
-import { Api, ApiGraphQLError, IRerunFunction } from '@8base-js-sdk/api';
+import Auth from '@8base-js-sdk/auth';
+import Api, { ApiGraphQLError, IRerunFunction } from '@8base-js-sdk/api';
 import ErrorCodes from '@8base/error-codes';
 
 import { ExtendedAuth } from './ExtendedAuth';
@@ -12,8 +12,8 @@ export class EightBase {
   constructor(options: IEightBaseOptions) {
     const {
       workspaceId,
-      auth: authOptions,
-      api: apiOptions,
+      Auth: authOptions,
+      Api: apiOptions,
       storage,
       storageKey,
       autoTokenRefresh = true,

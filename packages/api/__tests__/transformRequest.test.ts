@@ -1,4 +1,4 @@
-import { Api } from '../src';
+import Api from '../src';
 
 const { TEST_WORKSPACE_ID } = process.env;
 

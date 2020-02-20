@@ -1,6 +1,6 @@
 import { ExtendedAuth } from '../src/ExtendedAuth';
-import { AuthStrategy, Auth } from '@8base-js-sdk/auth';
-import { Api } from '@8base-js-sdk/api';
+import Auth, { AuthStrategy } from '@8base-js-sdk/auth';
+import Api from '@8base-js-sdk/api';
 
 const {
   AUTH_PROFILE_ID,

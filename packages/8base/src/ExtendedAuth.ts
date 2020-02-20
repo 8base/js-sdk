@@ -1,6 +1,5 @@
-import { Api, ApiGraphQLError } from '@8base-js-sdk/api';
-import {
-  Auth,
+import Api, { ApiGraphQLError } from '@8base-js-sdk/api';
+import Auth, {
   IAuth,
   AuthEvent,
   AuthCallback,
