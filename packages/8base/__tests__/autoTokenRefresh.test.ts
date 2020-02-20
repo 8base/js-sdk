@@ -3,7 +3,8 @@ jest.mock('@8base-js-sdk/auth', () => {
   const refreshToken = jest.fn();
 
   return {
-    Auth: class Auth {
+    __esModule: true,
+    default: class Auth {
       public currentUser: () => {};
       public refreshToken: () => Promise<{}>;
 
@@ -17,7 +18,7 @@ jest.mock('@8base-js-sdk/auth', () => {
   };
 });
 
-import { EightBase, AuthStrategy } from '../src';
+import EightBase, { AuthStrategy } from '../src';
 import ErrorCodes from '@8base/error-codes';
 // @ts-ignore
 import { refreshToken, currentUser } from '@8base-js-sdk/auth';
@@ -43,7 +44,7 @@ describe('Token auto refresh', () => {
   beforeEach(() => {
     eightBase = new EightBase({
       workspaceId: TEST_WORKSPACE_ID,
-      auth: {
+      Auth: {
         strategy: AuthStrategy.Auth0Auth,
         settings: {
           authProfileId: AUTH_PROFILE_ID,
@@ -53,7 +54,7 @@ describe('Token auto refresh', () => {
           redirectUri: TEST_SERVER_URL,
         },
       },
-      api: {},
+      Api: {},
     });
   });
 

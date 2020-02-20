@@ -1,12 +1,12 @@
-import { AuthOptions, Auth, IStorage } from '@8base-js-sdk/auth';
-import { IApiOptions, Api } from '@8base-js-sdk/api';
+import Auth, { AuthOptions, IStorage } from '@8base-js-sdk/auth';
+import Api, { IApiOptions } from '@8base-js-sdk/api';
 
 export interface IEightBaseOptions {
   workspaceId: string;
-  auth: AuthOptions & {
+  Auth: AuthOptions & {
     settings: AuthOptions['settings'] & { authProfileId: string };
   };
-  api: Omit<IApiOptions, 'workspaceId'>;
+  Api: Omit<IApiOptions, 'workspaceId'>;
   autoTokenRefresh?: boolean;
   storage?: IStorage;
   storageKey?: string;
