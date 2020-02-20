@@ -13,6 +13,9 @@
   "bugs": {
     "url": "https://github.com/8base/js-sdk/issues"
   },
+  "files": [
+    "lib/*"
+  ],
   "scripts": {
     "test": "jest --verbose",
     "clean": "rm -rf lib/* tsconfig.tsbuildinfo",

@@ -12,6 +12,9 @@
   "bugs": {
     "url": "https://github.com/8base/js-sdk/issues"
   },
+  "files": [
+    "lib/*"
+  ],
   "homepage": "https://github.com/8base/js-sdk#readme",
   "scripts": {
     "test": "jest --verbose",
