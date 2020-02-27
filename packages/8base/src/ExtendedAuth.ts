@@ -9,7 +9,6 @@ import {
 
 import { IExtendedAuthOptions, IGraphQLAuth, IUser, UserCreate } from './types';
 import {
-  CURRENT_USER_QUERY,
   USER_LOGIN_MUTATION,
   USER_SIGN_UP_MUTATION,
   USER_SIGN_UP_WITH_TOKEN_MUTATION,
@@ -144,25 +143,6 @@ export class ExtendedAuth implements IAuth, IGraphQLAuth {
 
     if (result?.data?.userSignUpWithToken) {
       return result.data.userSignUpWithToken;
-    }
-
-    return null;
-  }
-
-  public async currentUser(): Promise<IUser | null> {
-    const result = await this.api.request(CURRENT_USER_QUERY);
-
-    if (ApiGraphQLError.hasError(result)) {
-      throw new ApiGraphQLError(
-        {
-          query: CURRENT_USER_QUERY,
-        },
-        result,
-      );
-    }
-
-    if (result?.data?.user) {
-      return result.data.user;
     }
 
     return null;

@@ -22,7 +22,7 @@ jest.mock('@8base-js-sdk/auth', () => {
   };
 });
 
-import EightBase, { AuthStrategy } from '../src';
+import eightBase, { AuthStrategy } from '../src';
 import ErrorCodes from '@8base/error-codes';
 // @ts-ignore
 import { refreshToken, getState } from '@8base-js-sdk/auth';
@@ -37,7 +37,7 @@ const {
 
 describe('Token auto refresh', () => {
   let originalFetch: any;
-  let eightBase: any;
+  let api: any;
 
   beforeAll(() => {
     originalFetch = fetch;
@@ -46,7 +46,7 @@ describe('Token auto refresh', () => {
   });
 
   beforeEach(() => {
-    eightBase = EightBase.configure({
+    ({ api } = eightBase.configure({
       workspaceId: TEST_WORKSPACE_ID,
       Auth: {
         strategy: AuthStrategy.Auth0Auth,
@@ -60,7 +60,7 @@ describe('Token auto refresh', () => {
       },
       Api: {},
       autoTokenRefresh: true,
-    });
+    }));
   });
 
   afterEach(() => {
@@ -108,7 +108,7 @@ describe('Token auto refresh', () => {
       idToken: 'valid id token',
     });
 
-    const result = await eightBase.api.request(
+    const result = await api.request(
       `query {
         test
       }`,

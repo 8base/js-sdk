@@ -40,5 +40,4 @@ export interface IGraphQLAuth {
     password: string,
     token: string,
   ): Promise<IUser | null>;
-  currentUser(): Promise<IUser | null>;
 }
