@@ -116,6 +116,7 @@ export class ExtendedAuth implements IAuth, IGraphQLAuth {
     token: string,
   ): Promise<IUser | null> {
     const variables = {
+      authProfileId: this.authProfileId,
       user,
     };
 
