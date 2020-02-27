@@ -14,20 +14,23 @@ import { StorageFacade } from './StorageFacade';
 const DEFAULT_STORAGE_KEY = 'auth_storage';
 
 export class Auth implements IAuth {
+  public readonly storage?: StorageFacade<IAuthStorageState>;
   private readonly authStrategy: Auth0Strategy;
   private readonly emitter: EventEmitter;
-  private readonly storage: StorageFacade<IAuthStorageState>;
 
   constructor(
     options: AuthOptions,
-    storage: IStorage = window.localStorage,
+    storage?: IStorage,
     storageKey: string = DEFAULT_STORAGE_KEY,
   ) {
     const { settings } = options;
 
     this.authStrategy = new Auth0Strategy(settings);
     this.emitter = new EventEmitter();
-    this.storage = new StorageFacade<IAuthStorageState>(storage, storageKey);
+
+    if (storage) {
+      this.storage = new StorageFacade<IAuthStorageState>(storage, storageKey);
+    }
 
     this.subscribeOnEvents(options);
   }
@@ -52,7 +55,9 @@ export class Auth implements IAuth {
     if (auth0Data) {
       const authState = this.authStrategy.convertAuthDataToState(auth0Data);
 
-      this.storage.setState(authState);
+      if (this.storage) {
+        this.storage.setState(authState);
+      }
       this.emitter.emit(AuthEvent.Authorized, auth0Data);
 
       return auth0Data;
@@ -73,7 +78,9 @@ export class Auth implements IAuth {
     if (auth0Data) {
       const authState = this.authStrategy.convertAuthDataToState(auth0Data);
 
-      this.storage.setState(authState);
+      if (this.storage) {
+        this.storage.setState(authState);
+      }
       this.emitter.emit(AuthEvent.Refreshed, auth0Data);
 
       return auth0Data;
@@ -87,13 +94,11 @@ export class Auth implements IAuth {
   }
 
   public signOut(options?: LogoutOptions) {
-    this.storage.purgeState();
+    if (this.storage) {
+      this.storage.purgeState();
+    }
     this.emitter.emit(AuthEvent.SignedOut);
     this.authStrategy?.signOut(options);
-  }
-
-  public currentUser(): IAuthStorageState {
-    return this.storage.getState();
   }
 
   private subscribeOnEvents(options: AuthOptions): void {

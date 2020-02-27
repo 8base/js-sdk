@@ -42,3 +42,18 @@ export const USER_SIGN_UP_WITH_TOKEN_MUTATION = `
     }
   }
 `;
+
+export const CURRENT_USER_QUERY = `
+  query {
+    user {
+      id
+      email
+      firstName
+      lastName
+      timezone
+      avatar {
+        downloadUrl
+      }
+    }
+  }
+`;

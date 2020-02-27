@@ -48,7 +48,6 @@ export interface IAuth {
   refreshToken(): Promise<Auth0DecodedHash | null>;
   forgotPassword(email: string): Promise<string>;
   signOut(options?: {}): void;
-  currentUser(): IAuthStorageState;
   on(event: AuthEvent, callback: AuthCallback): void;
 }
 

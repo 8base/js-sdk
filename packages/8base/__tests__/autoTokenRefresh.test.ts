@@ -1,19 +1,23 @@
 jest.mock('@8base-js-sdk/auth', () => {
-  const currentUser = jest.fn();
+  const getState = jest.fn();
   const refreshToken = jest.fn();
 
   return {
     __esModule: true,
     default: class Auth {
-      public currentUser: () => {};
+      public storage: {
+        getState: () => {};
+      };
       public refreshToken: () => Promise<{}>;
 
       constructor() {
-        this.currentUser = currentUser;
+        this.storage = {
+          getState,
+        };
         this.refreshToken = refreshToken;
       }
     },
-    currentUser,
+    getState,
     refreshToken,
   };
 });
@@ -21,7 +25,7 @@ jest.mock('@8base-js-sdk/auth', () => {
 import EightBase, { AuthStrategy } from '../src';
 import ErrorCodes from '@8base/error-codes';
 // @ts-ignore
-import { refreshToken, currentUser } from '@8base-js-sdk/auth';
+import { refreshToken, getState } from '@8base-js-sdk/auth';
 
 const {
   AUTH_PROFILE_ID,
@@ -42,7 +46,7 @@ describe('Token auto refresh', () => {
   });
 
   beforeEach(() => {
-    eightBase = new EightBase({
+    eightBase = EightBase.configure({
       workspaceId: TEST_WORKSPACE_ID,
       Auth: {
         strategy: AuthStrategy.Auth0Auth,
@@ -55,6 +59,7 @@ describe('Token auto refresh', () => {
         },
       },
       Api: {},
+      autoTokenRefresh: true,
     });
   });
 
@@ -95,11 +100,11 @@ describe('Token auto refresh', () => {
 
     refreshToken.mockResolvedValueOnce({});
 
-    currentUser.mockReturnValueOnce({
+    getState.mockReturnValueOnce({
       idToken: 'expired id token',
     });
 
-    currentUser.mockReturnValueOnce({
+    getState.mockReturnValueOnce({
       idToken: 'valid id token',
     });
 
@@ -110,7 +115,7 @@ describe('Token auto refresh', () => {
     );
 
     expect(refreshToken).toHaveBeenCalled();
-    expect(currentUser).toHaveBeenCalledTimes(2);
+    expect(getState).toHaveBeenCalledTimes(2);
     expect(fetch).toHaveBeenCalledTimes(2);
     expect(fetch).toHaveBeenNthCalledWith(
       1,

@@ -18,16 +18,19 @@ const createGlobalAuth = (
   clientId: string,
   serverUrl: string,
 ) => {
-  const auth = new Auth({
-    strategy: 'AUTH0_AUTH',
-    settings: {
-      authProfileId,
-      clientId,
-      domain,
-      redirectUri: serverUrl,
-      logoutRedirectUri: serverUrl,
+  const auth = new Auth(
+    {
+      strategy: 'AUTH0_AUTH',
+      settings: {
+        authProfileId,
+        clientId,
+        domain,
+        redirectUri: serverUrl,
+        logoutRedirectUri: serverUrl,
+      },
     },
-  });
+    window.localStorage,
+  );
 
   window.auth = auth;
 };
@@ -105,7 +108,7 @@ describe('Auth0 Strategy', () => {
 
   it('returns current info about authorized user', async () => {
     const currentUserData = await page.evaluate(() => {
-      return auth.currentUser();
+      return auth.storage.getState();
     });
 
     expect(currentUserData).toMatchObject({
@@ -134,7 +137,7 @@ describe('Auth0 Strategy', () => {
     });
 
     const currentUserData = await page.evaluate(() => {
-      return auth.currentUser();
+      return auth.storage.getState();
     });
 
     expect(currentUserData).toMatchObject({
@@ -165,7 +168,7 @@ describe('Auth0 Strategy', () => {
     );
 
     const currentUserData = await page.evaluate(() => {
-      return auth.currentUser();
+      return auth.storage.getState();
     });
 
     expect(currentUserData).toEqual({});

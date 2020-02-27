@@ -1,5 +1,5 @@
 import Api, { ApiGraphQLError } from '@8base-js-sdk/api';
-import Auth, {
+import {
   IAuth,
   AuthEvent,
   AuthCallback,
@@ -9,6 +9,7 @@ import Auth, {
 
 import { IExtendedAuthOptions, IGraphQLAuth, IUser, UserCreate } from './types';
 import {
+  CURRENT_USER_QUERY,
   USER_LOGIN_MUTATION,
   USER_SIGN_UP_MUTATION,
   USER_SIGN_UP_WITH_TOKEN_MUTATION,
@@ -16,7 +17,7 @@ import {
 
 export class ExtendedAuth implements IAuth, IGraphQLAuth {
   private readonly api: Api;
-  private readonly auth: Auth;
+  private readonly auth: IAuth;
   private readonly authProfileId: string;
 
   constructor(options: IExtendedAuthOptions) {
@@ -45,10 +46,6 @@ export class ExtendedAuth implements IAuth, IGraphQLAuth {
 
   public signOut(options?: LogoutOptions) {
     return this.auth.signOut(options);
-  }
-
-  public currentUser() {
-    return this.auth.currentUser();
   }
 
   public on(event: AuthEvent, callback: AuthCallback) {
@@ -147,6 +144,25 @@ export class ExtendedAuth implements IAuth, IGraphQLAuth {
 
     if (result?.data?.userSignUpWithToken) {
       return result.data.userSignUpWithToken;
+    }
+
+    return null;
+  }
+
+  public async currentUser(): Promise<IUser | null> {
+    const result = await this.api.request(CURRENT_USER_QUERY);
+
+    if (ApiGraphQLError.hasError(result)) {
+      throw new ApiGraphQLError(
+        {
+          query: CURRENT_USER_QUERY,
+        },
+        result,
+      );
+    }
+
+    if (result?.data?.user) {
+      return result.data.user;
     }
 
     return null;

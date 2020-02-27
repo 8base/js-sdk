@@ -1,4 +1,4 @@
-import Auth, { AuthOptions, IStorage } from '@8base-js-sdk/auth';
+import { AuthOptions, IStorage, IAuth } from '@8base-js-sdk/auth';
 import Api, { IApiOptions } from '@8base-js-sdk/api';
 
 export interface IEightBaseOptions {
@@ -14,7 +14,7 @@ export interface IEightBaseOptions {
 
 export interface IExtendedAuthOptions {
   authProfileId: string;
-  auth: Auth;
+  auth: IAuth;
   api: Api;
 }
 
@@ -40,4 +40,5 @@ export interface IGraphQLAuth {
     password: string,
     token: string,
   ): Promise<IUser | null>;
+  currentUser(): Promise<IUser | null>;
 }

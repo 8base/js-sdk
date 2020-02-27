@@ -11,7 +11,8 @@
         "no-shadowed-variable": false,
         "variable-name": {
             "options": [
-                "allow-leading-underscore"
+                "allow-leading-underscore",
+                "allow-pascal-case"
             ]
         }
     },
