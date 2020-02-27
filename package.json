@@ -13,7 +13,7 @@
     "tslint": "tslint \"packages/*/{src,__tests__}/**/*.{ts,tsx}\" --exclude \"packages/*/__tests__/setup/*\"",
     "build": "lerna run build",
     "test": "lerna run test --stream",
-    "version": "lerna version",
+    "version": "lerna version --force-publish",
     "publish": "lerna publish from-package --yes"
   },
   "devDependencies": {
