@@ -1,6 +1,11 @@
-import { EightBase } from './EightBase';
+import configureEightBase from './configureEightBase';
 import Api from '@8base-js-sdk/api';
 import Auth from '@8base-js-sdk/auth';
+
+// @ts-ignore
+const EightBase = {
+  configure: configureEightBase,
+};
 
 export default EightBase;
 export { Api, Auth };
